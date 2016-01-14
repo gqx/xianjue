@@ -41,7 +41,7 @@ public class WaterValveHandler {
 				int state = cmd.getState(wv.getGorder());
 				wv.setState(state != 0?AttributeName.DEVICE_ON:AttributeName.DEVICE_OFF);
 				waterValveDao.update(wv);
-				logger.info("update light id:"+wv.getId()+" state: "+state);
+				logger.info("updateWaterValve id["+wv.getId()+"] state["+state+"]");
 			}
 			
 		}		

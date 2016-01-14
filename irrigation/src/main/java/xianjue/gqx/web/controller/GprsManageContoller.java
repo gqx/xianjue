@@ -28,7 +28,7 @@ public class GprsManageContoller {
 	
 	@RequestMapping(value = "index")
 	public ModelAndView index(){
-		ModelAndView mav = new ModelAndView("manageGprs");
+		ModelAndView mav = new ModelAndView("gprsManage");
 		List<Gprs> list = gprsService.getAllGprs();
 		mav.addObject("gprsList", list);
 		return mav;

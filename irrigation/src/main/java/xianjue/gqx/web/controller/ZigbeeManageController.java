@@ -9,9 +9,12 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import xianjue.gqx.enums.ErrorEnum;
+import xianjue.gqx.enums.ZigbeeTypeEnum;
 import xianjue.gqx.exception.GreenHouseException;
+import xianjue.gqx.web.service.GprsService;
 import xianjue.gqx.web.service.ZigbeeService;
 
 @Controller
@@ -23,9 +26,22 @@ public class ZigbeeManageController {
 	@Resource(name="zigbeeService")
 	private ZigbeeService zigbeeService;
 	
-	@RequestMapping(value = "index")
-	public String index(){
+	@Resource(name="gprsService")
+	private GprsService gprsService;
+	
+	@RequestMapping(value = "index2")
+	public String index2(){
 		return "createZigbee";
+	}
+	
+	@RequestMapping(value = "index")
+	public ModelAndView index(){
+		ModelAndView mav = new ModelAndView("zigbeeManage");
+		
+		mav.addObject("gprsList",gprsService.getAllGprs());	
+		mav.addObject("zigbeeTypes",ZigbeeTypeEnum.values());
+		
+		return mav;
 	}
 	
 	@ResponseBody

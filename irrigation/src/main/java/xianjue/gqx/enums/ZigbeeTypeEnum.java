@@ -6,9 +6,9 @@ package xianjue.gqx.enums;
  *
  */
 public enum ZigbeeTypeEnum {
-	VATER_VALVE(0,"水阀启动"),
-	PUMP(1,"水泵启动"),
-	PRESSURE(2,"压力值上传");
+	VATER_VALVE(0,"水阀"),
+	PUMP(1,"水泵"),
+	PRESSURE(2,"压力传感器");
 	
 	private int code;
 	private String desc;

@@ -61,7 +61,7 @@ public class SocketHolder {
 					os.flush();
 					//keep gprs receive right message
 					Thread.sleep(1000);
-				} catch (IOException | InterruptedException e) {
+				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 					return -1;

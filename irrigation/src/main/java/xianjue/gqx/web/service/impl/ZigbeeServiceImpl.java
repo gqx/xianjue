@@ -45,9 +45,20 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 	
 	@Transactional
 	@Override
-	public void createZigbee(String zigbeeMac,String zigbeeName,String gprsMac,int zigbeeType) throws GreenHouseException {
+	public void createZigbee(String zigbeeMac,String zigbeeName,String gprsMac,Integer zigbeeType) throws GreenHouseException {
+		
+		logger.info("#createZigbee# zigbeeMac[" + zigbeeMac + "] zigbeeName[" + zigbeeName + "] gprsMac[" + gprsMac + "] zigbeeType[" + zigbeeType + "]");
+		
+		if(zigbeeMac == null ||"".equals(zigbeeMac.trim())){
+			logger.error("#createZigbee# error : "+ErrorEnum.ZIGBEE_MAC_WRONG.getDesc());
+			throw new GreenHouseException(ErrorEnum.ZIGBEE_MAC_WRONG);
+		}
+		
+		if(zigbeeType == null){
+			logger.error("#createZigbee# error : "+ErrorEnum.ZIGBEE_TYPE_WRONG.getDesc());
+			throw new GreenHouseException(ErrorEnum.ZIGBEE_TYPE_WRONG);
+		}
 		ZigbeeTypeEnum zType = ZigbeeTypeEnum.getEnum(zigbeeType);
-		logger.info("#createZigbee# zigbeeMac[" + zigbeeMac + "] zigbeeName[" + zigbeeName + "] gprsMac[" + gprsMac + "] zigbeeType[" + zType + "]");
 		
 		Gprs gprs = gprsDao.getByMac(gprsMac);
 		if(gprs == null){
@@ -59,6 +70,7 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 			logger.error("#createZigbee# error : "+ErrorEnum.ZIGBEE_EXISTS.getDesc());
 			throw new GreenHouseException(ErrorEnum.ZIGBEE_EXISTS);
 		}
+		
 		
 		Zigbee zigbee = new Zigbee();
 		zigbee.setMac(zigbeeMac);
@@ -114,13 +126,33 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 	public void updateZigbee(String oldMac, String newMac, String name) throws GreenHouseException {
 		logger.info("#updateZigbee# oldMac["+oldMac+"] newMac["+newMac+"] name["+name+"]");
 		Zigbee zigbee = zigbeeDao.getZigbeeByZigbeeMac(oldMac);
+		Gprs gprs = gprsDao.getByMac(zigbee.getGmac());
 		if(zigbee != null){
 			zigbee.setName(name);
-			zigbee.setGmac(newMac);
+			zigbee.setMac(newMac);
 			zigbeeDao.updateZigbee(zigbee);
+			
+			ZigbeeTypeEnum zigbeeTypeEnum = ZigbeeTypeEnum.getEnum(zigbee.getZtype());
+			if(zigbeeTypeEnum == ZigbeeTypeEnum.VATER_VALVE){
+				List<Valve> valveList = valveDao.getValveByZigbeeMac(oldMac);
+				if(valveList != null){
+					for(Valve valve : valveList){
+						valve.setName(gprs.getName()+"-"+name+"-"+valve.getZorder());
+						valveDao.updateValve(valve);
+					}
+				}
+			}else if(zigbeeTypeEnum == ZigbeeTypeEnum.PUMP){
+				List<Pump> pumpList = pumpDao.getPumpByZigbeeMac(oldMac);
+				if(pumpList != null){
+					for(Pump pump : pumpList){
+						pump.setName(gprs.getName()+"-"+name+"-Ë®±Ã");
+						pumpDao.update(pump);
+				}
+			}
+		}
+			
 			if(!oldMac.equals(newMac)){
 				//update device if zigbee mac is changed
-				ZigbeeTypeEnum zigbeeTypeEnum = ZigbeeTypeEnum.getEnum(zigbee.getZtype());
 				if(zigbeeTypeEnum == ZigbeeTypeEnum.VATER_VALVE){
 					logger.info("#updateZigbee# update valve zmac");
 					valveDao.changeValveByZigbeeMac(oldMac, newMac);
@@ -139,8 +171,11 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 	}
 	@Transactional
 	@Override
-	public List<Zigbee> getZigbeeByGprsAndType(String gprsMac, int zigbeeType) {
-		
+	public List<Zigbee> getZigbeeByGprsAndType(String gprsMac, Integer zigbeeType) throws GreenHouseException {
+		if(zigbeeType == null){
+			logger.error("#createZigbee# error : "+ErrorEnum.ZIGBEE_TYPE_WRONG.getDesc());
+			throw new GreenHouseException(ErrorEnum.ZIGBEE_TYPE_WRONG);
+		}
 		List<Zigbee> list= zigbeeDao.getZigbeeByGprsMacAndType(gprsMac, zigbeeType);
 		if(list != null){
 			logger.info("getZigbeeByGprsAndType zigbee list size:"+list.size());

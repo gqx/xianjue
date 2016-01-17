@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import xianjue.gqx.dao.impl.GprsDao;
+import xianjue.gqx.dao.impl.PumpDao;
 import xianjue.gqx.dao.impl.ValveDao;
 import xianjue.gqx.dao.impl.ZigbeeDao;
 import xianjue.gqx.enums.ErrorEnum;
@@ -30,6 +31,9 @@ public class GprsServiceImpl implements GprsService{
 	
 	@Resource
 	private ValveDao valveDao;
+	
+	@Resource
+	private PumpDao pumpDao;
 	
 	@Transactional
 	@Override
@@ -89,6 +93,7 @@ public class GprsServiceImpl implements GprsService{
 					logger.info("deleteGprs deleteZigbee and valve. zigbeeMac["+zigbeeMac+"]");
 					zigbeeDao.delateZigbee(zigbeeMac);
 					valveDao.deleteByZigbeeMac(zigbeeMac);
+					pumpDao.deleteByZigbeeMac(zigbeeMac);
 				}
 			}
 			gprsDao.deleteGprs(gprsMac);

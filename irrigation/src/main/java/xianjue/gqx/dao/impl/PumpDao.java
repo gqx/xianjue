@@ -69,4 +69,14 @@ public class PumpDao extends BaseDaoImpl{
 		query.setString(0, zigbeeMac);
 		query.executeUpdate();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Pump> getPumpByZigbeeMac(String zigbeeMac){
+		Session session = getCurrentSession();
+
+		Query query = session.createQuery("from Pump where zmac=?");
+		query.setString(0, zigbeeMac);
+	
+		return query.list();
+	}
 }

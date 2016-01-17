@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import xianjue.gqx.enums.ErrorEnum;
 import xianjue.gqx.enums.ZigbeeTypeEnum;
 import xianjue.gqx.exception.GreenHouseException;
 import xianjue.gqx.web.service.GprsService;
@@ -50,34 +49,37 @@ public class ZigbeeManageController {
 	public Map<String,Object> getZigbeeByGprsAndType(String gprsMac,int zigbeeType){
 		logger.info("#getZigbeeByGprsAndType gprsMac["+gprsMac+"] zigbeeType["+zigbeeType+"]");
 		Map<String,Object> map = new HashMap<String, Object>();
-		map.put("zigbeeList",zigbeeService.getZigbeeByGprsAndType(gprsMac, zigbeeType));
-		map.put("success", true);
-		
-		return map;
+		try {
+			map.put("zigbeeList",zigbeeService.getZigbeeByGprsAndType(gprsMac, zigbeeType));
+			map.put("success", true);
+			return map;
+		} catch (GreenHouseException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+			map.put("error", e.getErrorDesc());
+			map.put("success", false);
+			return map;
+		}		
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "createZigbee")
-	public Map<String,Object> createZigbee(String gprsMac, String zigbeeMac,String zigbeeName, int zigbeeType){
+	public Map<String,Object> createZigbee(String gprsMac, String zigbeeMac,String zigbeeName, Integer zigbeeType){
 		logger.info("#createZigbee# gprsMac["+gprsMac+"] zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] zigbeeType["+zigbeeType+"]");
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
 			zigbeeService.createZigbee(zigbeeMac, zigbeeName, gprsMac,zigbeeType);
+			map.put("success", true);
+			return map;
 		} catch (GreenHouseException e) {
 			logger.error("#createZigbee# error zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] "+e.getErrorCode());
 //			e.printStackTrace();
-			if(e.getErrorCode().equals(ErrorEnum.GPRS_NOT_EXISTS.getCode())){
-				map.put("error", "gprs mac 不存在，必须事先设定好");
-			}else if(e.getErrorCode().equals(ErrorEnum.ZIGBEE_EXISTS.getCode())){
-				map.put("error", "zigbee mac 已经存在");
-			}
+			map.put("error", e.getErrorDesc());
 			map.put("success", false);
 			return map;
 		}
 		
-		map.put("success", true);
-		return map;
 	}
 	
 	@ResponseBody
@@ -88,18 +90,16 @@ public class ZigbeeManageController {
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
 			zigbeeService.updateZigbee(oldMac, newMac, name);
+			map.put("success", true);
+			return map;
 		} catch (GreenHouseException e) {
 			logger.error("#updateZigbee error oldMac["+oldMac+"] newMac["+newMac+"] name["+name+"]"+e.getErrorCode());
 //			e.printStackTrace();
-			if(e.getErrorCode().equals(ErrorEnum.ZIGBEE_NOT_EXISTS.getCode())){
-				map.put("error", "zigbee mac 不存在，必须事先设定好");
-			}
+			map.put("error", e.getErrorDesc());
 			map.put("success", false);
 			return map;
 		}
 		
-		map.put("success", true);
-		return map;
 	}
 
 	@ResponseBody
@@ -109,13 +109,13 @@ public class ZigbeeManageController {
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
 			zigbeeService.deleteZigbeeByMac(zigbeeMac);
+			map.put("success", true);
+			return map;
 		} catch (GreenHouseException e) {
 			logger.error("#createZigbee# error zigbeeMac[" + zigbeeMac + "] " + e.getErrorCode());
-			map.put("error", "系统异常");
+			map.put("error", e.getErrorDesc());
 			map.put("success", false);
 			return map;
 		}
-		map.put("success", true);
-		return map;
 	}
 }

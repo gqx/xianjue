@@ -1,11 +1,13 @@
 package xianjue.gqx.enums;
 
 public enum ErrorEnum {
-	GPRS_EXISTS("GPRS_EXISTS","gprsMac already exists"),
-	GPRS_NOT_EXISTS("GPRS_NOT_EXISTS","gprsMac does not exist"),
-	ZIGBEE_EXISTS("ZIGBEE_EXISTS","zigbeeMac already exists"),
-	DB_ERROR("DB_ERROR","database error"),
-	ZIGBEE_NOT_EXISTS("ZIGBEE_NOT_EXISTS","zigbee does not exist");
+	GPRS_EXISTS("GPRS_EXISTS","gprs mac 已经存在"),
+	GPRS_NOT_EXISTS("GPRS_NOT_EXISTS","gpr mac 不存在，必须事先设定好"),
+	ZIGBEE_EXISTS("ZIGBEE_EXISTS","zigbee mac 已经存在"),
+	DB_ERROR("DB_ERROR","数据库错误"),
+	ZIGBEE_NOT_EXISTS("ZIGBEE_NOT_EXISTS","zigbee 不存在, 必须事先设定好"),
+	ZIGBEE_TYPE_WRONG("ZIGBEE_TYPE_WRONG","zigbee 类型错误"),
+	ZIGBEE_MAC_WRONG("ZIGBEE_MAC_WRONG","zigbee mac 错误");
 	
 	private String code;
 	private String desc;

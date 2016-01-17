@@ -51,4 +51,14 @@ public class ZigbeeDao extends BaseDaoImpl{
 		List<Zigbee> list = query.list();
 		return list;
 	}
+	
+	public List<Zigbee> getZigbeeByGprsMacAndType(String gprsMac, int zType){
+		Session session = getCurrentSession();
+		Query query = session.createQuery("from Zigbee where gmac=? and zType=?");
+		query.setString(0, gprsMac);
+		query.setInteger(1, zType);
+		@SuppressWarnings("unchecked")
+		List<Zigbee> list = query.list();
+		return list;
+	}
 }

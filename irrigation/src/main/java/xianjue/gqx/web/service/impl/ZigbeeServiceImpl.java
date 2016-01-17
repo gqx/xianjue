@@ -1,5 +1,7 @@
 package xianjue.gqx.web.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
@@ -45,16 +47,16 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 	@Override
 	public void createZigbee(String zigbeeMac,String zigbeeName,String gprsMac,int zigbeeType) throws GreenHouseException {
 		ZigbeeTypeEnum zType = ZigbeeTypeEnum.getEnum(zigbeeType);
-		logger.info("create zigbee: zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] gprsMac["+gprsMac+"] zigbeeType["+zType+"]");
+		logger.info("#createZigbee# zigbeeMac[" + zigbeeMac + "] zigbeeName[" + zigbeeName + "] gprsMac[" + gprsMac + "] zigbeeType[" + zType + "]");
 		
 		Gprs gprs = gprsDao.getByMac(gprsMac);
 		if(gprs == null){
-			logger.error("createZigbee error : "+ErrorEnum.GPRS_NOT_EXISTS.getDesc());
+			logger.error("#createZigbee# error : "+ErrorEnum.GPRS_NOT_EXISTS.getDesc());
 			throw new GreenHouseException(ErrorEnum.GPRS_NOT_EXISTS);
 		}
 		
 		if(zigbeeDao.getZigbeeByZigbeeMac(zigbeeMac) != null){
-			logger.error("createZigbee error : "+ErrorEnum.ZIGBEE_EXISTS.getDesc());
+			logger.error("#createZigbee# error : "+ErrorEnum.ZIGBEE_EXISTS.getDesc());
 			throw new GreenHouseException(ErrorEnum.ZIGBEE_EXISTS);
 		}
 		
@@ -74,7 +76,7 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 		}else if(zType == ZigbeeTypeEnum.PUMP){
 			pumpDao.createPump(getNewPump(gprs.getName(),zigbeeMac,zigbeeName));
 		}else{
-			logger.error("createZigbee error : zigbeeType不匹配!");
+			logger.error("#createZigbee# error : zigbeeType不匹配!");
 		}
 		
 	}
@@ -82,55 +84,71 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 	@Transactional
 	@Override
 	public void deleteZigbeeByMac(String zigbeeMac) {
-		logger.info("deleteZigbeeByMac zigbee mac:"+zigbeeMac);
+		logger.info("#deleteZigbeeByMac# zigbee mac:" + zigbeeMac);
 		zigbeeDao.delateZigbee(zigbeeMac);
 		valveDao.deleteByZigbeeMac(zigbeeMac);
+		pumpDao.deleteByZigbeeMac(zigbeeMac);
 	}
-	
+
+
 	private Valve getNewValve(String gprsName, String zigbeeMac,String zigbeeName,int zorder){
 		Valve valve = new Valve();
 		valve.setValve_type("waterValve");
 		valve.setZmac(zigbeeMac);
 		valve.setZorder(zorder);
 		valve.setState(Valve.OFF_STATE);
-		valve.setName(gprsName+"-"+zigbeeName+"-"+zorder);
+		valve.setName(gprsName + "-" + zigbeeName + "-" + zorder);
 		return valve;
 	}
 	
 	private Pump getNewPump(String gprsName,String zigbeeMac,String zigbeeName){
 		Pump pump = new Pump();
-		pump.setName(gprsName+"-"+zigbeeName+"-水泵");
+		pump.setName(gprsName + "-" + zigbeeName + "-水泵");
 		pump.setState(Pump.OFF_STATE);
 		pump.setZmac(zigbeeMac);
 		return pump;
 	}
-	
 
 	@Transactional
 	@Override
-	public void updateZigbeeName(String zmac, String name) throws GreenHouseException {
-		Zigbee zigbee = zigbeeDao.getZigbeeByZigbeeMac(zmac);
-		if(zigbee != null){
-			zigbee.setName(name);
-			zigbeeDao.updateZigbee(zigbee);
-		}else{
-			throw new GreenHouseException(ErrorEnum.ZIGBEE_NOT_EXISTS);
-		}
-		
-	}
-
-	@Transactional
-	@Override
-	public void changeZigbeeMac(String oldMac, String newMac) throws GreenHouseException {
+	public void updateZigbee(String oldMac, String newMac, String name) throws GreenHouseException {
+		logger.info("#updateZigbee# oldMac["+oldMac+"] newMac["+newMac+"] name["+name+"]");
 		Zigbee zigbee = zigbeeDao.getZigbeeByZigbeeMac(oldMac);
 		if(zigbee != null){
+			zigbee.setName(name);
 			zigbee.setGmac(newMac);
 			zigbeeDao.updateZigbee(zigbee);
-			valveDao.changeValveByZigbeeMac(oldMac, newMac);
+			if(!oldMac.equals(newMac)){
+				//update device if zigbee mac is changed
+				ZigbeeTypeEnum zigbeeTypeEnum = ZigbeeTypeEnum.getEnum(zigbee.getZtype());
+				if(zigbeeTypeEnum == ZigbeeTypeEnum.VATER_VALVE){
+					logger.info("#updateZigbee# update valve zmac");
+					valveDao.changeValveByZigbeeMac(oldMac, newMac);
+				}else if(zigbeeTypeEnum == ZigbeeTypeEnum.PUMP){
+					logger.info("#updateZigbee# update pump zmac");
+					pumpDao.changePumpByZigbeeMac(oldMac,newMac);
+				}else{
+					logger.warn("#updateZigbee# zigbee has no devices!");
+				}
+			}
+
 		}else{
+			logger.error("#updateZigbee# error : "+ErrorEnum.ZIGBEE_NOT_EXISTS.getDesc());
 			throw new GreenHouseException(ErrorEnum.ZIGBEE_NOT_EXISTS);
 		}
+	}
+	@Transactional
+	@Override
+	public List<Zigbee> getZigbeeByGprsAndType(String gprsMac, int zigbeeType) {
 		
+		List<Zigbee> list= zigbeeDao.getZigbeeByGprsMacAndType(gprsMac, zigbeeType);
+		if(list != null){
+			logger.info("getZigbeeByGprsAndType zigbee list size:"+list.size());
+		}else{
+			logger.info("getZigbeeByGprsAndType zigbee list is null");
+		}
+		
+		return list;
 	}
 
 }

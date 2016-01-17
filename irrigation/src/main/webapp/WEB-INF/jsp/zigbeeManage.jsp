@@ -3,6 +3,7 @@
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="java.util.List"%>
 <%@ page import="xianjue.gqx.po.Gprs"%>
+<%@ page import="xianjue.gqx.po.Zigbee"%>
 <%@ page import="xianjue.gqx.enums.ZigbeeTypeEnum"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -22,8 +23,8 @@
 <script type="text/javascript">
 function createZigbee(){
 	var gprsMac = $("#gprsMac").val();
-	var zigbeeMac = $("#zigbeeMac").val();
-	var zigbeeName = $("#zigbeeName").val();
+	var zigbeeMac = $("#newZigbeeMac").val();
+	var zigbeeName = $("#newZigbeeName").val();
 	var zigbeeType = Number($("#zigbeeType").val());
 	
 	$.ajax({
@@ -46,13 +47,15 @@ function createZigbee(){
 	});
 }
 
-function changeZigbeeMac(){
+function updateZigbee(){
 	var oldMac = $("#oldMac").val();
 	var newMac = $("#newMac").val();
-	
+	var name = $("#newMac").val();
+
+
 	$.ajax({
 		type : 'POST',
-		url : "${pageContext.request.contextPath}/zigbeeManage/changeZigbeeMac",
+		url : "${pageContext.request.contextPath}/zigbeeManage/updateZigbee",
 		data : {
 			oldMac : oldMac,
 			newMac : newMac
@@ -62,10 +65,66 @@ function changeZigbeeMac(){
 			if(data.success == true){
 				alert("配置成功");
 			}else{
-				alert("添加失败："+data.error);
+				alert("添加失败：;+data.error")
 			}
 		}
 	});
+}
+
+function selectChange(){
+	  var gprsMac = $("#gprsMac").val();
+	  var zigbeeType = $("#zigbeeType").val();
+	  $.ajax({
+			type : 'POST',
+			url : "${pageContext.request.contextPath}/zigbeeManage/getZigbeeByGprsAndType",
+			data : {
+				gprsMac : gprsMac,
+				zigbeeType : zigbeeType
+			},
+			dataType : "json",
+			success : function(data) {
+				if(data.success == true){
+					var list = data.zigbeeList;
+					   $("#zigbeeTable").empty();
+					 for(var i=0; i<list.length; i++){
+		                 var tr = document.createElement("tr");
+		                 var th = document.createElement("th");
+		                 th.scope="row";
+		                 th.innerHTML=(i+1);
+		                 tr.appendChild(th);  
+		                 
+		                 var td = document.createElement("td");
+		                 td.innerHTML='<input id="zigbeeName_'+(i+1)+'" type="text" value="'+list[i].name+'">';
+		                 tr.appendChild(td);
+		                 
+		                 var td2 = document.createElement("td");
+		                 td2.innerHTML='<input id="zigbeemac_'+(i+1)+'" type="text" value="'+list[i].mac+'">';
+		                 tr.appendChild(td2);
+		                 
+		                 var td3 = document.createElement("td");
+		                 if(list[i].state == 'init'){
+		                	 td3.innerHTML='初始化';
+		                 }else{
+		                	 td3.innerHTML='已连接';
+		                 }
+		                 tr.appendChild(td3);
+		                 
+		                 var td4 = document.createElement("td");
+		                 td4.innerHTML='<button type="button" class="btn btn-primary btn-xs" onclick="editGprs('+list[i].mac+','+(i+1)+')">修改 </button>';
+		                 tr.appendChild(td4);
+		                 
+		                 var td5 = document.createElement("td");
+		                 td5.innerHTML='<button type="button" class="btn btn-primary btn-xs" onclick="editGprs('+list[i].mac+','+(i+1)+')">修改 </button>';
+		                 tr.appendChild(td5);
+		                 
+		                 document.getElementById("zigbeeTable").appendChild(tr);
+		             } 
+				}else{
+					
+				}
+			}
+		});
+	  
 }
 </script>
 <style type="text/css">
@@ -87,7 +146,7 @@ width:250px;
 		<form class="form-inline">
 			<div class="form-group">
 				<label for="gprsMac">GPRS MAC:</label> 
-				<select id="gprsMac" class="form-control">
+				<select id="gprsMac" class="form-control" onchange="selectChange()">
 				<%ArrayList<Gprs> gprsList = (ArrayList<Gprs>)request.getAttribute("gprsList"); 
 				  if(gprsList == null || gprsList.size() == 0){
 				%>
@@ -105,8 +164,13 @@ width:250px;
 				%>
 				
 				</select>
-				<label for="zigbeeType">Zigbee类型:</label> 
-				<select id="zigbeeType" class="form-control">
+				
+			</div>
+		</form>
+		<form class="form-inline" style="margin-top:20px;">
+			<div class="form-group">
+			<label for="zigbeeType">Zigbee类型:</label> 
+				<select id="zigbeeType" class="form-control" onchange="selectChange()">
 				<%ZigbeeTypeEnum[] zigbeeTypes = (ZigbeeTypeEnum[])request.getAttribute("zigbeeTypes"); 
 				  if(zigbeeTypes == null || zigbeeTypes.length == 0){
 				%>
@@ -126,6 +190,7 @@ width:250px;
 		</form>
 		<form class="form-inline" style="margin-top:20px;">
 			<div class="form-group">
+			
 				<label for="newZigbeeMac">Zigbee MAC:</label> 
 				<input id="newZigbeeMac" class="form-control" type="text" placeholder="输入Zigbee Mac">
 				<label for="newZigbeeName">Zigbee名称:</label> 
@@ -150,21 +215,21 @@ width:250px;
 						<th class="text-center">删除</th>
 					</tr>
 				</thead>
-				<tbody class="text-center">
+				<tbody id="zigbeeTable" class="text-center">
 					<%
-						ArrayList<Gprs> list = (ArrayList<Gprs>) request.getAttribute("gprsList");
+						ArrayList<Zigbee> list = (ArrayList<Zigbee>) request.getAttribute("zigbeeList");
 						if (list != null) {
 							for (int i = 0; i < list.size(); i++) {
-								Gprs gprs = list.get(i);
+								Zigbee zigbee = list.get(i);
 					%>
 					<tr>
 						<th scope="row"><%=i+1%></th>
-						<td><input id="gprsName_<%=i+1%>" type="text" value="<%=gprs.getName()%>"></td>
-						<td><input id="gprsMac_<%=i+1%>" type="text" value="<%=gprs.getMac()%>"></td>
-						<%String state = "init".equals(gprs.getState())?"初始化":"已连接"; %>
+						<td><input id="gprsName_<%=i+1%>" type="text" value="<%=zigbee.getName()%>"></td>
+						<td><input id="gprsMac_<%=i+1%>" type="text" value="<%=zigbee.getMac()%>"></td>
+						<%String state = "init".equals(zigbee.getState())?"初始化":"已连接"; %>
 						<td><%=state%></td>
-						<td><button type="button" class="btn btn-primary btn-xs" onclick="editGprs('<%=gprs.getMac()%>','<%=i+1%>')">修改 </button></td>
-						<td><button type="button" class="btn btn-primary btn-xs" onclick="deleteGprs('<%=gprs.getMac()%>')">删除</button></td>
+						<td><button type="button" class="btn btn-primary btn-xs" onclick="editGprs('<%=zigbee.getMac()%>','<%=i+1%>')">修改 </button></td>
+						<td><button type="button" class="btn btn-primary btn-xs" onclick="deleteGprs('<%=zigbee.getMac()%>')">删除</button></td>
 					</tr>
 					<%
 							}

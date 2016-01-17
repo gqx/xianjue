@@ -52,4 +52,21 @@ public class PumpDao extends BaseDaoImpl{
 		query.setInteger(0, id);
 		query.executeUpdate();
 	}
+
+	public void changePumpByZigbeeMac(String oldZmac, String newZmac){
+		Session session = getCurrentSession();
+
+		Query query = session.createQuery("update Pump set zmac=? where zmac=?");
+		query.setString(0, newZmac);
+		query.setString(1, oldZmac);
+
+	}
+
+	public void deleteByZigbeeMac(String zigbeeMac){
+		Session session = getCurrentSession();
+
+		Query query = session.createQuery("delete from Pump where zmac=?");
+		query.setString(0, zigbeeMac);
+		query.executeUpdate();
+	}
 }

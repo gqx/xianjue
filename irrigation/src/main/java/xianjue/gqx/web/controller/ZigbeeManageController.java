@@ -47,13 +47,13 @@ public class ZigbeeManageController {
 	@ResponseBody
 	@RequestMapping(value = "createZigbee")
 	public Map<String,Object> createZigbee(String gprsMac, String zigbeeMac,String zigbeeName, int zigbeeType){
-		logger.info("#createZigbee gprsMac["+gprsMac+"] zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] zigbeeType["+zigbeeType+"]");
+		logger.info("#createZigbee# gprsMac["+gprsMac+"] zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] zigbeeType["+zigbeeType+"]");
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
 			zigbeeService.createZigbee(zigbeeMac, zigbeeName, gprsMac,zigbeeType);
 		} catch (GreenHouseException e) {
-			logger.error("#createZigbee error zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] "+e.getErrorCode());
+			logger.error("#createZigbee# error zigbeeMac["+zigbeeMac+"] zigbeeName["+zigbeeName+"] "+e.getErrorCode());
 //			e.printStackTrace();
 			if(e.getErrorCode().equals(ErrorEnum.GPRS_NOT_EXISTS.getCode())){
 				map.put("error", "gprs mac 不存在，必须事先设定好");
@@ -69,15 +69,15 @@ public class ZigbeeManageController {
 	}
 	
 	@ResponseBody
-	@RequestMapping(value = "changeZigbeeMac")
-	public Map<String,Object> changeZigbeeMac(String oldMac, String zigbeeMac,String newMac){
-		logger.info("#changeZigbeeMac oldMac["+oldMac+"] newMac["+newMac+"]");
+	@RequestMapping(value = "updateZigbee")
+	public Map<String,Object> updateZigbee(String oldMac, String newMac, String name){
+		logger.info("#updateZigbee# oldMac["+oldMac+"] newMac["+newMac+"] name["+name+"]");
 		
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
-			zigbeeService.changeZigbeeMac(oldMac, newMac);
+			zigbeeService.updateZigbee(oldMac, newMac, name);
 		} catch (GreenHouseException e) {
-			logger.error("#changeZigbeeMac error oldMac["+oldMac+"] newMac["+newMac+"]"+e.getErrorCode());
+			logger.error("#updateZigbee error oldMac["+oldMac+"] newMac["+newMac+"] name["+name+"]"+e.getErrorCode());
 //			e.printStackTrace();
 			if(e.getErrorCode().equals(ErrorEnum.ZIGBEE_NOT_EXISTS.getCode())){
 				map.put("error", "zigbee mac 不存在，必须事先设定好");
@@ -86,6 +86,23 @@ public class ZigbeeManageController {
 			return map;
 		}
 		
+		map.put("success", true);
+		return map;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "deleteZigbee")
+	public Map<String,Object> deleteZigbee(String zigbeeMac){
+		logger.info("#deleteZigbee# zigbeeMac["+zigbeeMac+"]");
+		Map<String,Object> map = new HashMap<String, Object>();
+		try {
+			zigbeeService.deleteZigbeeByMac(zigbeeMac);
+		} catch (GreenHouseException e) {
+			logger.error("#createZigbee# error zigbeeMac[" + zigbeeMac + "] " + e.getErrorCode());
+			map.put("error", "系统异常");
+			map.put("success", false);
+			return map;
+		}
 		map.put("success", true);
 		return map;
 	}

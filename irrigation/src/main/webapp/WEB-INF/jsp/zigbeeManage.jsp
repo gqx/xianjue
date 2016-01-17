@@ -22,8 +22,8 @@
 <script type="text/javascript">
 function createZigbee(){
 	var gprsMac = $("#gprsMac").val();
-	var zigbeeMac = $("#zigbeeMac").val();
-	var zigbeeName = $("#zigbeeName").val();
+	var zigbeeMac = $("#newZigbeeMac").val();
+	var zigbeeName = $("#newZigbeeName").val();
 	var zigbeeType = Number($("#zigbeeType").val());
 	
 	$.ajax({
@@ -46,13 +46,15 @@ function createZigbee(){
 	});
 }
 
-function changeZigbeeMac(){
+function updateZigbee(){
 	var oldMac = $("#oldMac").val();
 	var newMac = $("#newMac").val();
-	
+	var name = $("#newMac").val();
+
+
 	$.ajax({
 		type : 'POST',
-		url : "${pageContext.request.contextPath}/zigbeeManage/changeZigbeeMac",
+		url : "${pageContext.request.contextPath}/zigbeeManage/updateZigbee",
 		data : {
 			oldMac : oldMac,
 			newMac : newMac

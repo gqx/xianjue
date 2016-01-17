@@ -150,5 +150,4 @@ public class ZigbeeServiceImpl implements ZigbeeService{
 		
 		return list;
 	}
-
 }

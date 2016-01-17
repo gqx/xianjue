@@ -12,4 +12,5 @@ public interface ZigbeeService {
 	public void updateZigbee(String oldMac, String newMac, String name)throws GreenHouseException;
 	public List<Zigbee> getZigbeeByGprsAndType(String gprsMac,int zigbeeType);
 
+
 }

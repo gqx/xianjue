@@ -1,5 +1,6 @@
 package xianjue.gqx.quartz;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,21 +14,18 @@ public class TaskManager {
 	@Autowired
 	private IrrigationTask irrigationTask;
 	
-	@Autowired
-	private StartIrrigationTask startIrrigationTask;
-	
-	private ScheduledExecutorService executor = Executors.newScheduledThreadPool(5);
+	private ExecutorService executor = Executors.newCachedThreadPool();
 	
 	public void setup(){
 		irrigationTask.setTaskManager(this);
-	    executor.scheduleWithFixedDelay(irrigationTask,0,1,TimeUnit.SECONDS);
+	    executor.submit(irrigationTask);
 	}
 
-	public ScheduledExecutorService getExecutor() {
+	public ExecutorService getExecutor() {
 		return executor;
 	}
 
-	public void setExecutor(ScheduledExecutorService executor) {
+	public void setExecutor(ExecutorService executor) {
 		this.executor = executor;
 	}
 
@@ -37,17 +35,6 @@ public class TaskManager {
 
 	public void setIrrigationTask(IrrigationTask irrigationTask) {
 		this.irrigationTask = irrigationTask;
-	}
-
-	public StartIrrigationTask getStartIrrigationTask() {
-		return startIrrigationTask;
-	}
-
-	public void setStartIrrigationTask(StartIrrigationTask startIrrigationTask) {
-		this.startIrrigationTask = startIrrigationTask;
-	}
-	
-	
-	
+	}	
 	
 }

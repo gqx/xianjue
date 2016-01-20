@@ -1,8 +1,5 @@
 package xianjue.gqx.quartz;
 
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,30 +7,53 @@ public class IrrigationTask implements Runnable{
 
 	private TaskManager taskManager;
 	
-	int i = 0;
+	private Process process;
+	
+	private CheckStatusProcess checkStatusProcess = new CheckStatusProcess();
+	
+	private InitIrrigationProcess initIrrigationProcess = new InitIrrigationProcess();
 	
 	@Override
 	public void run() {
-		i++;
+		checkStatusProcess.setIrrigationTask(this);
+		initIrrigationProcess.setIrrigationTask(this);
+		process = initIrrigationProcess;
+		while(true){
+			process.execute();
+		}
 		
-		System.out.println("IrrigationTask:"+i);
-		if(i > 3){
-			System.out.println("IrrigationTask:shutdownNow");
-			ScheduledExecutorService executor =  taskManager.getExecutor();
-			executor.shutdownNow();
-			if(executor.isShutdown()){
-				System.out.println("IrrigationTask:StartIrrigationTask");
-				executor.scheduleWithFixedDelay(taskManager.getIrrigationTask(), 0, 1, TimeUnit.SECONDS);
-			}	
-		}	
 	}
-
+	
 	public TaskManager getTaskManager() {
 		return taskManager;
 	}
 
 	public void setTaskManager(TaskManager taskManager) {
 		this.taskManager = taskManager;
+	}
+
+	public Process getProcess() {
+		return process;
+	}
+
+	public void setProcess(Process process) {
+		this.process = process;
+	}
+
+	public CheckStatusProcess getCheckStatusProcess() {
+		return checkStatusProcess;
+	}
+
+	public void setCheckStatusProcess(CheckStatusProcess checkStatusProcess) {
+		this.checkStatusProcess = checkStatusProcess;
+	}
+
+	public InitIrrigationProcess getInitIrrigationProcess() {
+		return initIrrigationProcess;
+	}
+
+	public void setInitIrrigationProcess(InitIrrigationProcess initIrrigationProcess) {
+		this.initIrrigationProcess = initIrrigationProcess;
 	}
 	
 	

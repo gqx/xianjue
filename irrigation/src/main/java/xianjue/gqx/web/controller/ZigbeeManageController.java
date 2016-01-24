@@ -13,7 +13,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import xianjue.gqx.enums.ZigbeeTypeEnum;
 import xianjue.gqx.exception.GreenHouseException;
-import xianjue.gqx.quartz.TaskManager;
 import xianjue.gqx.web.service.GprsService;
 import xianjue.gqx.web.service.ZigbeeService;
 
@@ -34,9 +33,6 @@ public class ZigbeeManageController {
 		return "createZigbee";
 	}
 	
-	@Resource
-	private TaskManager taskManager;
-	
 	@RequestMapping(value = "index")
 	public ModelAndView index(){
 		ModelAndView mav = new ModelAndView("zigbeeManage");
@@ -44,14 +40,13 @@ public class ZigbeeManageController {
 		mav.addObject("gprsList",gprsService.getAllGprs());	
 		mav.addObject("zigbeeTypes",ZigbeeTypeEnum.values());
 		mav.addObject("success",true);
-		taskManager.setup();
 		return mav;
 	}
 	
 	@ResponseBody
 	@RequestMapping(value = "getZigbeeByGprsAndType")
 	public Map<String,Object> getZigbeeByGprsAndType(String gprsMac,int zigbeeType){
-		logger.info("#getZigbeeByGprsAndType gprsMac["+gprsMac+"] zigbeeType["+zigbeeType+"]");
+		logger.info("#getZigbeeByGprsAndType gprsMac[" + gprsMac + "] zigbeeType[" + zigbeeType + "]");
 		Map<String,Object> map = new HashMap<String, Object>();
 		try {
 			map.put("zigbeeList",zigbeeService.getZigbeeByGprsAndType(gprsMac, zigbeeType));

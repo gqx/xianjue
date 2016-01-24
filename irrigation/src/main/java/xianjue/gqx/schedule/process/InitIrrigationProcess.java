@@ -1,5 +1,6 @@
 package xianjue.gqx.schedule.process;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import xianjue.gqx.schedule.ScheduleProcess;
 
@@ -8,12 +9,14 @@ import xianjue.gqx.schedule.ScheduleProcess;
  */
 public class InitIrrigationProcess implements ScheduleProcess {
 
+	private static Logger logger = Logger.getLogger(InitIrrigationProcess.class);
+
 	@Value("${schedule.init-irrigation.delay}")
 	private String delayTime;
 
 	@Override
 	public void execute() {
-		System.out.println("InitIrrigationProcess: setScheduleProcess CheckStatusProcess");
+		logger.info(Thread.currentThread().getName()+" execute");
 	}
 
 	@Override

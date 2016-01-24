@@ -40,6 +40,11 @@ public class IrrigationThreadFactory implements ThreadFactory {
         String name = prefix + threadNum.getAndIncrement();
         Thread ret = new Thread(threadGroup, r, name, 0);
         ret.setDaemon(daemon);
+
+        if(threadNum.intValue() > 999){
+            threadNum.set(1);
+        }
+
         return ret;
     }
 }

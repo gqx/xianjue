@@ -15,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import xianjue.gqx.enums.ErrorEnum;
 import xianjue.gqx.exception.GreenHouseException;
 import xianjue.gqx.po.Gprs;
+import xianjue.gqx.schedule.ScheduleManager;
 import xianjue.gqx.web.service.GprsService;
 
 @Controller
@@ -25,11 +26,15 @@ public class GprsManageContoller {
 	@Resource(name="gprsService")
 	private GprsService gprsService;
 
+	@Resource(name="scheduleManager")
+	private ScheduleManager scheduleManager;
+
 	@RequestMapping(value = "index")
 	public ModelAndView index(){
 		ModelAndView mav = new ModelAndView("gprsManage");
 		List<Gprs> list = gprsService.getAllGprs();
 		mav.addObject("gprsList", list);
+		scheduleManager.destroy();
 		return mav;
 	}
 	

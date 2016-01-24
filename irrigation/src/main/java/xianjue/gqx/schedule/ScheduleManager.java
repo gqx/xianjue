@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 将scheduleProcessList中配置好的任务用ScheduledExecutorService运行
@@ -33,6 +30,7 @@ public class ScheduleManager {
 
     private Map<String,List<ScheduleProcess>> timeMap = new HashMap<String, List<ScheduleProcess>>();
 
+    private ThreadFactory threadFactory = new IrrigationThreadFactory("schedule", true);
     /**
      * 将任务按照时间分类，放入map中
      */
@@ -57,10 +55,12 @@ public class ScheduleManager {
      */
     public void execute(){
         logger.info("#execute#---------------start---------------");
+        //不能有重复任务，所以首先关闭之前的任务
+        destroy();
         for(String key : timeMap.keySet()){
             List<ScheduleProcess> list = timeMap.get(key);
             ScheduleThread scheduleThread = new ScheduleThread(list);
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1, new IrrigationThreadFactory(key+"s-schedule", true));
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1,threadFactory);
             ScheduledFuture future = executorService.scheduleWithFixedDelay(scheduleThread,0,Long.valueOf(key),TimeUnit.SECONDS);
 
             this.executorServiceList.add(executorService);
@@ -83,6 +83,8 @@ public class ScheduleManager {
             } catch (Throwable e) {
             }
         }
+        scheduledFutureList.clear();
+        executorServiceList.clear();
         logger.info("#destroy#---------------finish---------------");
     }
 

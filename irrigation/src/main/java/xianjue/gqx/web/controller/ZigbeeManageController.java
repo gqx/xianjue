@@ -13,6 +13,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import xianjue.gqx.enums.ZigbeeTypeEnum;
 import xianjue.gqx.exception.GreenHouseException;
+import xianjue.gqx.schedule.ScheduleManager;
 import xianjue.gqx.web.service.GprsService;
 import xianjue.gqx.web.service.ZigbeeService;
 
@@ -27,6 +28,9 @@ public class ZigbeeManageController {
 	
 	@Resource(name="gprsService")
 	private GprsService gprsService;
+
+	@Resource(name="scheduleManager")
+	private ScheduleManager scheduleManager;
 	
 	@RequestMapping(value = "index2")
 	public String index2(){
@@ -39,7 +43,8 @@ public class ZigbeeManageController {
 		
 		mav.addObject("gprsList",gprsService.getAllGprs());	
 		mav.addObject("zigbeeTypes",ZigbeeTypeEnum.values());
-		mav.addObject("success",true);
+		mav.addObject("success", true);
+		scheduleManager.execute();
 		return mav;
 	}
 	

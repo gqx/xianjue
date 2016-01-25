@@ -71,8 +71,8 @@ CREATE TABLE `pump_pressure` (
 DROP TABLE IF EXISTS `task_schedule`;
 CREATE TABLE `task_schedule` (
     `id`		int   			AUTO_INCREMENT	COMMENT 'id',
-    `task_code` 		varchar(32) 	DEFAULT NULL 	COMMENT '任务编码，区分不同任务',
-    `task_status`	varchar(32)		DEFAULT NULL 	COMMENT '任务状态',
+    `task_type` 		varchar(32) 	DEFAULT NULL 	COMMENT '任务类型，区分不同任务',
+    `task_status`	varchar(32)		DEFAULT NULL 	COMMENT '任务状态:初始化init 运行run 结束finish',
     `task_desc`	  varchar(256)		DEFAULT NULL 	COMMENT '任务描述',
     `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT  '最后一次更新时间',
     PRIMARY KEY (`id`)

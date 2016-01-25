@@ -7,7 +7,7 @@ import xianjue.gqx.schedule.ScheduleProcess;
 /**
  * ³õÊ¼»¯ÂÖ¹à
  */
-public class InitIrrigationProcess implements ScheduleProcess {
+public class InitIrrigationProcess extends ScheduleProcess {
 
 	private static Logger logger = Logger.getLogger(InitIrrigationProcess.class);
 
@@ -15,13 +15,14 @@ public class InitIrrigationProcess implements ScheduleProcess {
 	private String delayTime;
 
 	@Override
-	public void execute() {
-		logger.info(Thread.currentThread().getName()+" execute");
+	public String getDelayTime() {
+		return delayTime;
 	}
 
 	@Override
-	public String getDelayTime() {
-		return delayTime;
+	public void execute() {
+		logger.info(Thread.currentThread().getName()+" execute");
+		
 	}
 
 }

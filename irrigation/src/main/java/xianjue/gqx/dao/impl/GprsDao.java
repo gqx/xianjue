@@ -11,7 +11,6 @@ import xianjue.gqx.po.Gprs;
 import xianjue.gqx.util.AttributeName;
 
 @Component("gprsDao")
-@Scope("prototype")
 public class GprsDao extends BaseDaoImpl{
 	
 	public int createGprs(String mac,String name,String ip,Integer illumination,Integer temperature,Integer humidity){

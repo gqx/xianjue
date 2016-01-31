@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +27,8 @@ public class ScheduleManager {
 
     private List<ScheduledExecutorService> executorServiceList = new ArrayList<ScheduledExecutorService>();
 
-    private List<ScheduledFuture> scheduledFutureList = new ArrayList<ScheduledFuture>();
+    @SuppressWarnings("rawtypes")
+	private List<ScheduledFuture> scheduledFutureList = new ArrayList<ScheduledFuture>();
 
     private Map<String,List<ScheduleProcess>> timeMap = new HashMap<String, List<ScheduleProcess>>();
 
@@ -47,7 +49,6 @@ public class ScheduleManager {
             list.add(scheduleProcess);
         }
         logger.info("#init#---------------finish---------------");
-        execute();
     }
 
     /**
@@ -61,7 +62,7 @@ public class ScheduleManager {
             List<ScheduleProcess> list = timeMap.get(key);
             ScheduleThread scheduleThread = new ScheduleThread(list);
             ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1,threadFactory);
-            ScheduledFuture future = executorService.scheduleWithFixedDelay(scheduleThread,0,Long.valueOf(key),TimeUnit.SECONDS);
+            ScheduledFuture<?> future = executorService.scheduleWithFixedDelay(scheduleThread,0,Long.valueOf(key),TimeUnit.SECONDS);
 
             this.executorServiceList.add(executorService);
             this.scheduledFutureList.add(future);
@@ -75,7 +76,7 @@ public class ScheduleManager {
     @PreDestroy
     public void destroy(){
         logger.info("#destroy#---------------start---------------");
-        for(ScheduledFuture future : scheduledFutureList) {
+        for(ScheduledFuture<?> future : scheduledFutureList) {
             try {
                 if(future != null && !future.isCancelled()) {
                     future.cancel(true);
@@ -104,11 +105,13 @@ public class ScheduleManager {
         this.executorServiceList = executorServiceList;
     }
 
-    public List<ScheduledFuture> getScheduledFutureList() {
+    @SuppressWarnings("rawtypes")
+	public List<ScheduledFuture> getScheduledFutureList() {
         return scheduledFutureList;
     }
 
-    public void setScheduledFutureList(List<ScheduledFuture> scheduledFutureList) {
+    @SuppressWarnings("rawtypes")
+	public void setScheduledFutureList(List<ScheduledFuture> scheduledFutureList) {
         this.scheduledFutureList = scheduledFutureList;
     }
 

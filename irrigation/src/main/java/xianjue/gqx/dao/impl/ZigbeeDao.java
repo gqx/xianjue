@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import xianjue.gqx.po.Zigbee;
 
 @Component("zigbeeDao")
-@Scope("prototype")
 public class ZigbeeDao extends BaseDaoImpl{
 	
 	public int createZigbee(Zigbee zigbee){

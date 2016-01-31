@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import xianjue.gqx.po.Pump;
 
 @Component("pumpDao")
-@Scope("prototype")
 public class PumpDao extends BaseDaoImpl{
 	
 	public int createPump(Pump pump){

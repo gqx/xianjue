@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import xianjue.gqx.po.Valve;
 
 @Component("valveDao")
-@Scope("prototype")
 public class ValveDao extends BaseDaoImpl{
 	
 	public int createValve(Valve valve){

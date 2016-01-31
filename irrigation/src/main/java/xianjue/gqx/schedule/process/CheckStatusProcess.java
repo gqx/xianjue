@@ -2,8 +2,11 @@ package xianjue.gqx.schedule.process;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import xianjue.gqx.dao.impl.TaskScheduleDao;
 import xianjue.gqx.enums.TaskTypeEnum;
@@ -21,6 +24,7 @@ public class CheckStatusProcess extends ScheduleProcess {
 	@Value("${schedule.check-status.delay}")
 	private String delayTime;
 	
+	@Resource(name="taskScheduleDao")
 	private TaskScheduleDao taskScheduleDao; 
 	
 	private final TaskTypeEnum TASKTYPE = TaskTypeEnum.CHECK_STATUS;
@@ -30,15 +34,21 @@ public class CheckStatusProcess extends ScheduleProcess {
 		return delayTime;
 	}
 
+	@Transactional
 	@Override
 	public void execute() {
-		logger.info(Thread.currentThread().getName()+" execute");
-		List<TaskSchedule> list = taskScheduleDao.getByTaskType(TASKTYPE.getCode());
-		for(TaskSchedule taskSchedule : list){
-			if(taskSchedule.getTask_status() == ""){
-				//TODO
+		logger.info(Thread.currentThread().getName()+" CheckStatusProcess execute");
+		try{
+			List<TaskSchedule> list = taskScheduleDao.getByTaskType(TASKTYPE.getCode());
+			for(TaskSchedule taskSchedule : list){
+				if(taskSchedule.getTask_status() == ""){
+					//TODO
+				}
 			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
+		
 	}
 
 

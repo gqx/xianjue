@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
@@ -15,18 +17,21 @@ public class TaskSchedule implements Serializable{
 	 */
 	private static final long serialVersionUID = -237008393463722407L;
 	
+	private Integer id;
+	private String task_type;
+	private String task_status;
+	private String task_desc;
+	private Timestamp update_time;
+	
+	
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return id;
 	}
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	private Integer id;
-	private String task_type;
-	private String task_status;
-	private Integer task_desc;
-	private Timestamp update_time;
-	
 	public String getTask_type() {
 		return task_type;
 	}
@@ -39,10 +44,10 @@ public class TaskSchedule implements Serializable{
 	public void setTask_status(String task_status) {
 		this.task_status = task_status;
 	}
-	public Integer getTask_desc() {
+	public String getTask_desc() {
 		return task_desc;
 	}
-	public void setTask_desc(Integer task_desc) {
+	public void setTask_desc(String task_desc) {
 		this.task_desc = task_desc;
 	}
 	public Timestamp getUpdate_time() {

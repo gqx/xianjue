@@ -19,5 +19,6 @@
 		<mapping class="xianjue.gqx.po.Valve" />
 		<mapping class="xianjue.gqx.po.Pump" />
 		<mapping class="xianjue.gqx.po.PumpPressure" />
+		<mapping class="xianjue.gqx.po.TaskSchedule" />
 	</session-factory>
 </hibernate-configuration>

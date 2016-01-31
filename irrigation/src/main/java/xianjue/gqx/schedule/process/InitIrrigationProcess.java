@@ -21,7 +21,7 @@ public class InitIrrigationProcess extends ScheduleProcess {
 
 	@Override
 	public void execute() {
-		logger.info(Thread.currentThread().getName()+" execute");
+		logger.info(Thread.currentThread().getName()+" InitIrrigationProcess execute");
 		
 	}
 

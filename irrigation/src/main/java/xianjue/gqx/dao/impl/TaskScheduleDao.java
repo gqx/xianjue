@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import xianjue.gqx.po.TaskSchedule;
 
 @Component("taskScheduleDao")
-@Scope("prototype")
 public class TaskScheduleDao extends BaseDaoImpl{
 	
 	public int create(TaskSchedule taskSchedule){
@@ -58,6 +57,17 @@ public class TaskScheduleDao extends BaseDaoImpl{
 		
 		Query query = session.createQuery("from TaskSchedule where task_type = ?");
 		query.setString(0, taskType);
+		@SuppressWarnings("unchecked")
+		List<TaskSchedule> list = query.list();
+		
+		return list;
+	}
+	
+	public List<TaskSchedule> getByTaskStatus(String taskStatus) {
+		Session session = getCurrentSession();
+		
+		Query query = session.createQuery("from TaskSchedule where task_status = ?");
+		query.setString(0, taskStatus);
 		@SuppressWarnings("unchecked")
 		List<TaskSchedule> list = query.list();
 		

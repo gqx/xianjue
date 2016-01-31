@@ -64,7 +64,7 @@
 		<property name="scheduleProcessList">
 			<list>
 				<bean class="xianjue.gqx.schedule.process.CheckStatusProcess"></bean>
-				<bean class="xianjue.gqx.schedule.process.InitIrrigationProcess"></bean>
+				<!--bean class="xianjue.gqx.schedule.process.InitIrrigationProcess"></bean-->
 			</list>
 		</property>
 	</bean>

@@ -7,7 +7,10 @@ public enum ErrorEnum {
 	DB_ERROR("DB_ERROR","数据库错误"),
 	ZIGBEE_NOT_EXISTS("ZIGBEE_NOT_EXISTS","zigbee 不存在, 必须事先设定好"),
 	ZIGBEE_TYPE_WRONG("ZIGBEE_TYPE_WRONG","zigbee 类型错误"),
-	ZIGBEE_MAC_WRONG("ZIGBEE_MAC_WRONG","zigbee mac 错误");
+	ZIGBEE_MAC_WRONG("ZIGBEE_MAC_WRONG","zigbee mac 错误"),
+	
+	NOT_ALL_TASK_STOP("NOT_ALL_TASK_STOP","已有任务正在执行,无法启动新任务"),
+	NO_TASK_CONFIG("NO_TASK","没有配置任务");
 	
 	private String code;
 	private String desc;
@@ -33,4 +36,5 @@ public enum ErrorEnum {
 		}
 		return null;
 	}
+	
 }
